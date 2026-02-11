@@ -63,6 +63,37 @@ Some of the exciting new features include:
 Please refer to [compression_schemes.md](./docs/guides/compression_schemes.md) for detailed information about available optimization schemes and their use cases.
 
 
+
+## Repository Flow Diagram
+
+```mermaid
+flowchart TD
+    U[User / Script] --> E[Entrypoints
+oneshot / model_free_ptq]
+    E --> A[args
+parse recipe, model, dataset config]
+    E --> R[recipe
+normalize recipe definitions]
+    R --> C[core.Session + Lifecycle]
+    A --> C
+    C --> P[pipelines
+basic / sequential / data_free / independent]
+    P --> M[modifiers
+quantization / pruning / transforms]
+    M --> O[observers
+collect calibration stats]
+    O --> M
+    M --> T[transformers + pytorch helpers
+model patching + layer utilities]
+    T --> S[save compressed checkpoint
+(safetensors + metadata)]
+    S --> V[vLLM runtime]
+
+    C -.metrics/events.-> L[metrics/logger]
+    E -.optional model-free path.-> MF[entrypoints/model_free]
+    MF --> S
+```
+
 ## Installation
 
 ```bash
